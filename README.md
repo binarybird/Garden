@@ -73,7 +73,7 @@ api-token <your-token-here>
 Content-Type application/json
 ``` 
 ---   
-GET /garden/v1/users/me - Get current user info. Only own user accessable if role != 0   
+GET /garden/v1/users/me - Get current user info.    
 Expected Headers:   
 ```
 api-token <your-token-here>
@@ -109,19 +109,22 @@ Expected Body:
 }
 ```
 ---   
-GET /garden/v1/devices/ -  Get a list of all devices
+GET /garden/v1/devices/ -  Get a list of all devices   
+Expected Headers:  
 ```
 api-token <your-token-here>
 Content-Type application/json
 ```
 ---   
 GET /garden/v1/devices/{INT} - Get single device   
+Expected Headers:   
 ```
 api-token <your-token-here>
 Content-Type application/json
 ```
 ---   
 PUT /garden/v1/devices/{INT} - Update device   
+Expected Headers:   
 ```
 api-token <your-token-here>
 Content-Type application/json
@@ -139,12 +142,14 @@ Expected Body:
 ```
 ---   
 DELETE /garden/v1/devices/{INT} - Delete device   
+Expected Headers:   
 ```
 api-token <your-token-here>
 Content-Type application/json
 ```
 ---   
 GET /garden/v1/devices/{INT}/poll - Poll device   
+Expected Headers:   
 ```
 api-token <your-token-here>
 Content-Type application/json
