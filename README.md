@@ -5,6 +5,7 @@ Prereq:
 1) Get a raspi
 2) Enable i2c
 3) Stick an i2c muxer on bus 1 (I used a TCA9548A)
+4) Stick a SHT20 and others on the muxer!
 
 To run the server:
 1) Install your db of choice (postgres used here). Create a DATABASE
