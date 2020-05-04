@@ -23,3 +23,99 @@ export PORT=8080
 8) python3 run.py
 
 Ill document the API and i2c device interface later!
+
+Janky API docs so far:
+POST /garden/v1/users - create a user (auto assigned role = 1). api-token returned.
+Expected Body:
+{
+    "name": "Some Name",
+    "email": "email@google.com",
+    "password": "pAs5woRd",
+}
+
+GET /garden/v1/users - gets all users (only if role = 0)
+Expected Headers:
+api-token <your-token-here>
+Content-Type application/json
+
+GET /garden/v1/users/{INT} - Get user by id. Only own user accessable if role != 0
+Expected Headers:
+api-token <your-token-here>
+Content-Type application/json
+
+PUT /garden/v1/users/{INT} - Update user by id. Only own user accessable if role != 0
+Expected Headers:
+api-token <your-token-here>
+Content-Type application/json
+Expected Body:
+Expected Body:
+{
+    "name": "Some Name",
+    "email": "email@google.com",
+    "password": "pAs5woRd",
+}
+
+DELETE /garden/v1/users/{INT} - Delete user by id. Only own user accessable if role != 0
+Expected Headers:
+api-token <your-token-here>
+Content-Type application/json
+
+GET /garden/v1/users/me - Get current user info. Only own user accessable if role != 0
+Expected Headers:
+api-token <your-token-here>
+Content-Type application/json
+
+POST /garden/v1/login - Login. api-token returned.
+Expected Body:
+{
+    "email": "email@google.com",
+    "password": "pAs5woRd",
+}
+
+
+
+
+
+POST /garden/v1/devices - Add i2c device
+Expected Headers:
+api-token <your-token-here>
+Content-Type application/json
+Expected Body:
+{
+	"name": "Air Sensor",
+	"device_clazz": "SHT20",
+	"address": 64,
+	"bus": "1",
+	"mux_address": 112,
+	"mux_channel": 16
+}
+
+GET /garden/v1/devices/ -  Get a list of all devices
+api-token <your-token-here>
+Content-Type application/json
+
+GET /garden/v1/devices/{INT} - Get single device
+api-token <your-token-here>
+Content-Type application/json
+
+PUT /garden/v1/devices/{INT} - Update device
+api-token <your-token-here>
+Content-Type application/json
+Expected Body:
+{
+	"name": "Air Sensor",
+	"device_clazz": "SHT20",
+	"address": 64,
+	"bus": "1",
+	"mux_address": 112,
+	"mux_channel": 16
+}
+
+DELETE /garden/v1/devices/{INT} - Delete device
+api-token <your-token-here>
+Content-Type application/json
+
+GET /garden/v1/devices/{INT}/poll - Poll device
+api-token <your-token-here>
+Content-Type application/json
+
