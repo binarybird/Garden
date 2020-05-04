@@ -91,7 +91,7 @@ Expected Body:
    
 ---   
    
-POST /garden/v1/devices - Add i2c device
+POST /garden/v1/devices - Add i2c device   
 Expected Headers:
 ```
 api-token <your-token-here>
