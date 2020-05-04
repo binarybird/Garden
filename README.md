@@ -1,7 +1,12 @@
 # Garden
 A REST api using Flask for managing/recording/polling i2c sensors and data on my Raspberry pi
 
-To run
+Prereq:
+1) Get a raspi
+2) Enable i2c
+3) Stick an i2c muxer on bus 1 (I used a TCA9548A)
+
+To run the server:
 1) Install your db of choice (postgres used here). Create a DATABASE
 2) vi ~/.bashrc (or .bash_profile)
 3) add envars:   
