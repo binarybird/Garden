@@ -1,13 +1,8 @@
-import struct
-
 import RPi.GPIO as GPIO
-from numpy.core import int16, uint16
 
 from src.device.interface import *
 from src.device.bus import SimpleSMBus
 import time
-import numpy
-
 
 muxer = None
 
@@ -162,7 +157,6 @@ class BMP180(I2CMuxDevice):
             bus.write8(BMP180.CONTROL, BMP180.READTEMPCMD)
             time.sleep(0.005)  # Wait 5ms
             raw = bus.readU16BE(BMP180.TEMPDATA)
-            print('Raw temp 0x{0:X} ({1})'.format(raw & 0xFFFF, raw))
         return raw
 
     def read_raw_pressure(self):
@@ -181,7 +175,6 @@ class BMP180(I2CMuxDevice):
             lsb = bus.readU8(BMP180.PRESSUREDATA + 1)
             xlsb = bus.readU8(BMP180.PRESSUREDATA + 2)
             raw = ((msb << 16) + (lsb << 8) + xlsb) >> (8 - self._mode)
-            print('Raw pressure 0x{0:04X} ({1})'.format(raw & 0xFFFF, raw))
         return raw
 
     def read_temperature(self):
@@ -194,7 +187,6 @@ class BMP180(I2CMuxDevice):
         X2 = (self.cal_MC << 11) // (X1 + self.cal_MD)
         B5 = X1 + X2
         temp = ((B5 + 8) >> 4) / 10.0
-        print('Calibrated temperature {0} C'.format(temp))
         return temp
 
     def read_pressure(self):
@@ -209,22 +201,17 @@ class BMP180(I2CMuxDevice):
         X1 = ((UT - self.cal_AC6) * self.cal_AC5) >> 15
         X2 = (self.cal_MC << 11) // (X1 + self.cal_MD)
         B5 = X1 + X2
-        print('B5 = {0}'.format(B5))
         # Pressure Calculations
         B6 = B5 - 4000
-        print('B6 = {0}'.format(B6))
         X1 = (self.cal_B2 * (B6 * B6) >> 12) >> 11
         X2 = (self.cal_AC2 * B6) >> 11
         X3 = X1 + X2
         B3 = (((self.cal_AC1 * 4 + X3) << self._mode) + 2) // 4
-        print('B3 = {0}'.format(B3))
         X1 = (self.cal_AC3 * B6) >> 13
         X2 = (self.cal_B1 * ((B6 * B6) >> 12)) >> 16
         X3 = ((X1 + X2) + 2) >> 2
         B4 = (self.cal_AC4 * (X3 + 32768)) >> 15
-        print('B4 = {0}'.format(B4))
         B7 = (UP - B3) * (50000 >> self._mode)
-        print('B7 = {0}'.format(B7))
         if B7 < 0x80000000:
             p = (B7 * 2) // B4
         else:
@@ -233,7 +220,6 @@ class BMP180(I2CMuxDevice):
         X1 = (X1 * 3038) >> 16
         X2 = (-7357 * p) >> 16
         p = p + ((X1 + X2 + 3791) >> 4)
-        print('Pressure {0} Pa'.format(p))
         return p
 
     def read_altitude(self, sealevel_pa=101325.0):
@@ -241,7 +227,6 @@ class BMP180(I2CMuxDevice):
         # Calculation taken straight from section 3.6 of the datasheet.
         pressure = float(self.read_pressure())
         altitude = 44330.0 * (1.0 - pow(pressure / sealevel_pa, (1.0 / 5.255)))
-        print('Altitude {0} m'.format(altitude))
         return altitude
 
     def read_sealevel_pressure(self, altitude_m=0.0):
@@ -249,7 +234,6 @@ class BMP180(I2CMuxDevice):
         meters. Returns a value in Pascals."""
         pressure = float(self.read_pressure())
         p0 = pressure / pow(1.0 - altitude_m / 44330.0, 5.255)
-        print('Sealevel pressure {0} Pa'.format(p0))
         return p0
 
     def get_mux_channel(self):

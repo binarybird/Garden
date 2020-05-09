@@ -24,13 +24,11 @@ class SimpleSMBus:
         print("Closing "+self.dev.get_name())
         SimpleSMBus._bus.close()
         SimpleSMBus._bus = None
-        pass
 
     def writeRaw8(self, value):
         """Write an 8-bit value on the bus (without register)."""
         value = value & 0xFF
         SimpleSMBus._bus.write_byte(self.dev.get_address(), value)
-        print("Wrote 0x%02X",value)
 
     def write8(self, register, value):
         """Write an 8-bit value to the specified register."""

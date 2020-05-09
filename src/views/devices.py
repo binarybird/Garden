@@ -11,6 +11,18 @@ import src.device.device
 device_api = Blueprint('device_api', __name__)
 device_schema = DeviceSchema()
 
+poll_listeners = []
+
+def instantiate_device(data):
+    dev_class = getattr(src.device.device, data['device_clazz'])
+    instance = dev_class(data)
+
+    muxer = src.device.device.get_muxer()
+    change_mux_channel(muxer, instance)
+
+    instance.initialize()
+    return instance
+
 @device_api.route('/', methods=['POST'])
 # @Auth.auth_required
 def create():
@@ -66,6 +78,17 @@ def delete(device_id):
     dev.delete()
     return custom_response({'message': 'deleted'}, 204)
 
+@device_api.route('/poll', methods=['GET'])
+def poll_all():
+    devices = DeviceModel.get_all()
+    ser_devices = device_schema.dump(devices, many=True)
+    ret = []
+    for data in ser_devices:
+        if not data['enabled']:
+            continue
+        instance = instantiate_device(data)
+        ret.append(instance.poll())
+    return custom_response(ret, 200)
 
 @device_api.route('/<int:device_id>/poll', methods=['GET'])
 # @Auth.auth_required
@@ -75,14 +98,7 @@ def poll(device_id):
         return custom_response({'error': 'device not found'}, 404)
 
     ser_dev = device_schema.dump(dev)
-
-    dev_class = getattr(src.device.device, ser_dev['device_clazz'])
-    instance = dev_class(ser_dev)
-
-    muxer = src.device.device.get_muxer()
-    change_mux_channel(muxer, instance)
-
-    instance.initialize()
+    instance = instantiate_device(ser_dev)
 
     return custom_response(instance.poll(), 200)
 
