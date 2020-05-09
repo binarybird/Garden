@@ -8,41 +8,8 @@ from src.device.device import *
 import src.device
 import src.device.device
 
-# import board
-# import digitalio
-# import busio
-
-
 device_api = Blueprint('device_api', __name__)
 device_schema = DeviceSchema()
-
-# @device_api.route('/test', methods=['GET'])
-# def test():
-#     pass
-    # i2c = busio.I2C(board.SCL, board.SDA)
-    #
-    # i2c.writeto(0x70, 0x10)
-    #
-    # i2c.writeto(0x40, SHT20.TEMPERATURE_NO_HOLD)
-    # time.sleep(0.5)
-    # i2c.readfrom_into
-    # data0 = bus.rbyte()
-    # data1 = bus.rbyte()
-    #
-    # temp = data0 * 256 + data1
-    # cTemp = -46.85 + ((temp * 175.72) / 65536.0)
-    #
-    # bus.wbyte(SHT20.HUMIDITY_NO_HOLD)
-    # time.sleep(0.5)
-    #
-    # data0 = bus.rbyte()
-    # data1 = bus.rbyte()
-    #
-    # humidity = data0 * 256 + data1
-    # humidity = -6 + ((humidity * 125.0) / 65536.0)
-#
-#
-# return {'humidity': humidity, 'temperature': cTemp}
 
 @device_api.route('/', methods=['POST'])
 # @Auth.auth_required
