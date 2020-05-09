@@ -14,6 +14,7 @@ class DeviceModel(db.Model):
     bus = db.Column(db.Integer)
     mux_address = db.Column(db.Integer)
     mux_channel = db.Column(db.Integer)
+    enabled = db.Column(db.Boolean)
     created_at = db.Column(db.DateTime)
     modified_at = db.Column(db.DateTime)
 
@@ -22,6 +23,7 @@ class DeviceModel(db.Model):
         self.device_clazz = data.get('device_clazz')
         self.address = data.get('address')
         self.bus = data.get('bus')
+        self.enabled = data.get('enabled')
         self.mux_address = data.get('mux_address')
         self.mux_channel = data.get('mux_channel')
         self.created_at = datetime.datetime.utcnow()
@@ -61,5 +63,6 @@ class DeviceSchema(Schema):
     bus = fields.Int(required=True)
     mux_address = fields.Int(required=True)
     mux_channel = fields.Int(required=True)
+    enabled = fields.Bool(required=True)
     created_at = fields.DateTime(dump_only=True)
     modified_at = fields.DateTime(dump_only=True)

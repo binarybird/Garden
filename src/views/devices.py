@@ -4,16 +4,48 @@ import src
 from src.models.users import UserModel, UserSchema
 from src.models.devices import DeviceModel, DeviceSchema
 from src.shared.auth import Auth
-from src.i2c.device import *
-import src.i2c
-import src.i2c.device
+from src.device.device import *
+import src.device
+import src.device.device
+
+# import board
+# import digitalio
+# import busio
+
 
 device_api = Blueprint('device_api', __name__)
 device_schema = DeviceSchema()
 
+# @device_api.route('/test', methods=['GET'])
+# def test():
+#     pass
+    # i2c = busio.I2C(board.SCL, board.SDA)
+    #
+    # i2c.writeto(0x70, 0x10)
+    #
+    # i2c.writeto(0x40, SHT20.TEMPERATURE_NO_HOLD)
+    # time.sleep(0.5)
+    # i2c.readfrom_into
+    # data0 = bus.rbyte()
+    # data1 = bus.rbyte()
+    #
+    # temp = data0 * 256 + data1
+    # cTemp = -46.85 + ((temp * 175.72) / 65536.0)
+    #
+    # bus.wbyte(SHT20.HUMIDITY_NO_HOLD)
+    # time.sleep(0.5)
+    #
+    # data0 = bus.rbyte()
+    # data1 = bus.rbyte()
+    #
+    # humidity = data0 * 256 + data1
+    # humidity = -6 + ((humidity * 125.0) / 65536.0)
+#
+#
+# return {'humidity': humidity, 'temperature': cTemp}
 
 @device_api.route('/', methods=['POST'])
-@Auth.auth_required
+# @Auth.auth_required
 def create():
     req_data = request.get_json()
     data = device_schema.load(req_data)
@@ -26,7 +58,7 @@ def create():
 
 
 @device_api.route('/', methods=['GET'])
-@Auth.auth_required
+# @Auth.auth_required
 def get_all():
     devices = DeviceModel.get_all()
     ser_devices = device_schema.dump(devices, many=True)
@@ -34,7 +66,7 @@ def get_all():
 
 
 @device_api.route('/<int:device_id>', methods=['GET'])
-@Auth.auth_required
+# @Auth.auth_required
 def get_device(device_id):
     dev = DeviceModel.get(device_id)
     if not dev:
@@ -45,7 +77,7 @@ def get_device(device_id):
 
 
 @device_api.route('/<int:device_id>', methods=['PUT'])
-@Auth.auth_required
+# @Auth.auth_required
 def update(device_id):
     req_data = request.get_json()
     data = device_schema.load(req_data, partial=True)
@@ -59,7 +91,7 @@ def update(device_id):
 
 
 @device_api.route('/<int:device_id>', methods=['DELETE'])
-@Auth.auth_required
+# @Auth.auth_required
 def delete(device_id):
     dev = DeviceModel.get(device_id)
     if not dev:
@@ -69,23 +101,23 @@ def delete(device_id):
 
 
 @device_api.route('/<int:device_id>/poll', methods=['GET'])
-@Auth.auth_required
+# @Auth.auth_required
 def poll(device_id):
     dev = DeviceModel.get(device_id)
     if not dev:
         return custom_response({'error': 'device not found'}, 404)
 
     ser_dev = device_schema.dump(dev)
-    muxer = src.i2c.device.get_muxer()
 
-    devclass = getattr(src.i2c.device, ser_dev['device_clazz'])
-    instance = devclass(ser_dev['mux_channel'], ser_dev['mux_address'],
-                        ser_dev['name'], ser_dev['bus'], ser_dev['address'])
+    dev_class = getattr(src.device.device, ser_dev['device_clazz'])
+    instance = dev_class(ser_dev)
 
+    muxer = src.device.device.get_muxer()
     change_mux_channel(muxer, instance)
-    resp = instance.poll()
 
-    return custom_response(resp, 200)
+    instance.initialize()
+
+    return custom_response(instance.poll(), 200)
 
 
 def custom_response(res, status_code):

@@ -1,6 +1,13 @@
 
+class Pollable:
+    def initialize(self):
+        raise NotImplementedError()
 
-class I2CDevice:
+    def poll(self):
+        raise NotImplementedError()
+
+
+class I2CDevice(Pollable):
     def get_bus_number(self):
         raise NotImplementedError()
 
@@ -8,9 +15,6 @@ class I2CDevice:
         raise NotImplementedError()
 
     def get_name(self):
-        raise NotImplementedError()
-
-    def poll(self):
         raise NotImplementedError()
 
 
