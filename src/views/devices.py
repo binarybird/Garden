@@ -13,6 +13,7 @@ device_schema = DeviceSchema()
 
 poll_listeners = []
 
+"""Instantiates an i2c device with the class stored in the DB"""
 def instantiate_device(data):
     dev_class = getattr(src.device.device, data['device_clazz'])
     instance = dev_class(data)

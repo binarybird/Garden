@@ -2,9 +2,11 @@ import os
 from src.app import create_app
 import RPi.GPIO as GPIO
 import src.device.device
+import logging
 
 env_name = os.getenv('FLASK_ENV')
 app = create_app(env_name)
+logging.basicConfig(level=logging.DEBUG)
 
 if __name__ == '__main__':
     muxer = src.device.device.get_muxer()
@@ -13,7 +15,7 @@ if __name__ == '__main__':
     gpio = muxer.get_address_gpio()
     for pin in gpio:
         state = gpio[pin]
-        print("Setting pin " + str(pin) + " to " + str(state))
+        app.logger.debug("Setting pin " + str(pin) + " to " + str(state))
         GPIO.setup(pin, GPIO.OUT)
         GPIO.output(pin, state)
     try:
